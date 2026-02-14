@@ -644,9 +644,9 @@
                             const delay = audioCtx.createDelay();
                             delay.delayTime.value = 0.05;
                             const feedback = audioCtx.createGain();
-                            feedback.gain.value = 0.2;
+                            feedback.gain.value = 0.1;
                             const volumeNode = audioCtx.createGain();
-                            volumeNode.gain.value = 0.01;
+                            volumeNode.gain.value = 0.05;
 
                             source.connect(delay);
                             delay.connect(feedback);
