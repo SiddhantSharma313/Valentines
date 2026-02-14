@@ -1,0 +1,726 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A Special Question ❤️</title>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Inter:wght@400;700&display=swap"
+        rel="stylesheet">
+
+    <style>
+        :root {
+            --primary: #ff4d6d;
+            --secondary: #ff85a1;
+            --glow-pink: #ff00ff;
+            --cosmic-gold: #ffdf91;
+            --ivory: #fff5e6;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body,
+        button,
+        a,
+        input,
+        div {
+            font-family: 'Inter', sans-serif;
+            cursor: none !important;
+        }
+
+        body {
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            background-color: #050505;
+        }
+
+        body::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, rgba(0, 0, 0, 0.4) 0%, rgba(0, 0, 0, 0.9) 100%);
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        body::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('space-heart.jpg');
+            background-size: cover;
+            background-position: center center;
+            background-repeat: no-repeat;
+            z-index: -2;
+            pointer-events: none;
+            transform: scale(1.05);
+            animation: steadyHeartbeat 6s ease-in-out infinite;
+            transition: opacity 1.5s ease, filter 1s ease;
+        }
+
+        body.accepted::after {
+            opacity: 0;
+            filter: blur(20px);
+        }
+
+        @keyframes steadyHeartbeat {
+
+            0%,
+            100% {
+                transform: scale(1.05);
+            }
+
+            50% {
+                transform: scale(1.08);
+            }
+        }
+
+        /* --- THE CINEMATIC PORTAL TRANSITION --- */
+        #portal-transition {
+            position: fixed;
+            top: var(--y, 50%);
+            left: var(--x, 50%);
+            width: 10vmax;
+            height: 10vmax;
+            background: radial-gradient(circle, white 0%, var(--cosmic-gold) 40%, transparent 70%);
+            border-radius: 50%;
+            z-index: 200;
+            pointer-events: none;
+            transform: translate(-50%, -50%) scale(0);
+            opacity: 0;
+            filter: blur(10px);
+            transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.5s ease;
+        }
+
+        #portal-transition.active {
+            transform: translate(-50%, -50%) scale(25);
+            opacity: 1;
+        }
+
+        .cursor-blob {
+            width: 14px;
+            height: 14px;
+            background: white;
+            border-radius: 50%;
+            position: fixed;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+            z-index: 9999;
+            box-shadow: 0 0 10px var(--glow-pink), 0 0 30px var(--glow-pink), 0 0 60px white;
+            transform-origin: center center;
+            will-change: transform;
+        }
+
+        canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+
+        #star-canvas {
+            z-index: 1;
+        }
+
+        #dust-canvas {
+            z-index: 15;
+        }
+
+        .glass-card {
+            background: rgba(10, 10, 15, 0.75);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 3.5rem;
+            border-radius: 30px;
+            text-align: center;
+            box-shadow: 0 0 50px rgba(0, 0, 0, 0.9);
+            z-index: 10;
+            max-width: 90%;
+            width: 500px;
+            transition: opacity 1s ease, transform 1s ease, filter 1s ease;
+        }
+
+        body.accepted .glass-card {
+            opacity: 0;
+            transform: scale(0.9);
+            filter: blur(15px);
+        }
+
+        h1 {
+            font-family: 'Dancing Script', cursive;
+            font-size: 3.5rem;
+            color: #ff4d6d;
+            margin-bottom: 2rem;
+            text-shadow: 0 0 15px rgba(255, 77, 109, 0.4);
+            line-height: 1.2;
+        }
+
+        button {
+            padding: 14px 40px;
+            border: none;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 1.2rem;
+            transition: transform 0.2s ease, background-color 0.3s ease;
+        }
+
+        .btn-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            min-height: 150px;
+        }
+
+        #yes-btn {
+            background-color: var(--primary);
+            color: white;
+            box-shadow: 0 0 25px var(--primary);
+            animation: pulse 2s infinite;
+            z-index: 20;
+            white-space: nowrap;
+            transition: all 0.2s ease;
+            transform-origin: center;
+        }
+
+        #no-btn {
+            background-color: #ffffff;
+            color: #0f0c29;
+            font-size: 0.9rem;
+            position: absolute;
+            z-index: 20;
+            transition: left 0.15s ease-out, top 0.15s ease-out;
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.3);
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                transform: scale(1);
+                box-shadow: 0 0 20px var(--primary);
+            }
+
+            50% {
+                transform: scale(1.05);
+                box-shadow: 0 0 40px var(--primary);
+            }
+        }
+
+        /* --- UPDATED SUCCESS SCREEN --- */
+        .success-screen {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+            opacity: 0;
+            /* Transition for smooth background shift */
+            transition: opacity 2s ease, background 3s ease;
+            background: radial-gradient(circle at center, #1a0a1f 0%, #050505 100%);
+        }
+
+        /* Nebula effect after video */
+        .success-screen.post-video {
+            background: radial-gradient(circle at center, #2d0b2e 0%, #050505 100%);
+        }
+
+        #supernova-vid {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: 1;
+            transition: opacity 2s ease;
+        }
+
+        .success-content {
+            text-align: center;
+            z-index: 10;
+        }
+
+        .success-content h1 {
+            font-size: 4.5rem;
+            color: white;
+            text-shadow: 0 0 35px rgba(255, 255, 255, 1);
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 2s ease 0.5s;
+        }
+
+        .success-screen.visible {
+            opacity: 1;
+        }
+
+        .success-screen.visible h1 {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        @media (max-width: 600px) {
+            h1 {
+                font-size: 2.5rem;
+            }
+
+            .success-content h1 {
+                font-size: 2.8rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <audio id="bg-music" loop src="waiting.mp3"></audio>
+    <audio id="get-over-here-sfx" src="get-over-here.mp3"></audio>
+    <audio id="yay-sfx" src="yay.mp4"></audio>
+    <audio id="success-music" loop src="shooting-stars.mp3"></audio>
+
+    <div id="portal-transition"></div>
+    <canvas id="star-canvas"></canvas>
+    <canvas id="dust-canvas"></canvas>
+
+    <div class="cursor-blob" id="cursor-blob"></div>
+
+    <div class="glass-card">
+        <div id="question-area">
+            <h1>Will you be my Valentine ❤️</h1>
+            <div class="btn-container">
+                <button id="yes-btn">YES! 😍</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="success-screen" class="success-screen">
+        <video id="supernova-vid" muted playsinline>
+            <source src="Scene_a_spectacular_202602140358_k14xy.mp4" type="video/mp4">
+        </video>
+        <div class="success-content">
+            <h1>I knew you'd say yes! 🎉</h1>
+        </div>
+    </div>
+
+    <button id="no-btn">No 😢</button>
+
+    <script>
+        // AUDIO LOGIC
+        const bgMusic = document.getElementById('bg-music');
+        const getOverHereSfx = document.getElementById('get-over-here-sfx');
+        const yaySfx = document.getElementById('yay-sfx');
+        const successMusic = document.getElementById('success-music');
+
+        let hasPlayedGetOverHere = false;
+        let hasStartedFinalMusic = false;
+
+        document.addEventListener('mousemove', () => {
+            if (bgMusic.paused && !isAccepted) {
+                bgMusic.volume = 0.4;
+                bgMusic.play().catch(error => {
+                    console.log("Waiting for more interaction...");
+                });
+            }
+        }, { once: true });
+
+        yaySfx.addEventListener('timeupdate', () => {
+            const silentTail = 1.8;
+            if (yaySfx.currentTime >= (yaySfx.duration - silentTail) && !hasStartedFinalMusic) {
+                hasStartedFinalMusic = true;
+                playSuccessMusic();
+            }
+        });
+
+        function playSuccessMusic() {
+            successMusic.volume = 0;
+            successMusic.play();
+            let vol = 0;
+            const fadeIn = setInterval(() => {
+                if (vol < 0.6) {
+                    vol += 0.05;
+                    successMusic.volume = vol;
+                } else clearInterval(fadeIn);
+            }, 100);
+        }
+
+        const DUST_PER_FRAME = 3;
+        const NO_PHRASES = ["No 😢", "You sure?", "Think again!", "Last chance!", "Noooo!", "Think AGAIN!", "This is a mistake!", "PLS reconsider?", "You're my Love ;)"];
+
+        const dustCanvas = document.getElementById('dust-canvas');
+        const starCanvas = document.getElementById('star-canvas');
+        const dCtx = dustCanvas.getContext('2d');
+        const sCtx = starCanvas.getContext('2d');
+        const blob = document.getElementById('cursor-blob');
+        const yesBtn = document.getElementById('yes-btn');
+        const noBtn = document.getElementById('no-btn');
+        const portal = document.getElementById('portal-transition');
+        const supernovaVid = document.getElementById('supernova-vid');
+        const successScreen = document.getElementById('success-screen');
+
+        let dustParticles = [];
+        let stars = [];
+        let shootingStars = [];
+        let finalHearts = [];
+        let showFinalHearts = false;
+        let mouse = { x: window.innerWidth / 2, y: window.innerHeight / 2 };
+        let prevMouse = { x: window.innerWidth / 2, y: window.innerHeight / 2 };
+        let clickScale = 1.0;
+        let isAccepted = false;
+        let starSpeedMultiplier = 1.0;
+        let isWarping = false; // New flag for warp effect
+
+        const initialFontSize = parseFloat(window.getComputedStyle(yesBtn).fontSize);
+
+        function initCanvases() {
+            dustCanvas.width = starCanvas.width = window.innerWidth;
+            dustCanvas.height = starCanvas.height = window.innerHeight;
+            initStars();
+        }
+        window.addEventListener('resize', initCanvases);
+
+        function drawHeartPath(ctx, x, y, size) {
+            ctx.beginPath();
+            ctx.moveTo(x, y);
+            ctx.bezierCurveTo(x - size / 2, y - size / 2, x - size, y + size / 3, x, y + size);
+            ctx.bezierCurveTo(x + size, y + size / 3, x + size / 2, y - size / 2, x, y);
+            ctx.closePath();
+        }
+
+        class LuminousHeart {
+            constructor() {
+                this.x = Math.random() * starCanvas.width;
+                this.y = Math.random() * starCanvas.height;
+                this.targetSize = Math.random() * 40 + 20;
+                this.currentSize = 0;
+                this.opacity = 0;
+                this.growSpeed = Math.random() * 0.1 + 0.05;
+                this.color = Math.random() > 0.5 ? '255, 223, 145' : '255, 77, 109';
+                this.pulseOffset = Math.random() * Math.PI * 2;
+                this.vx = (Math.random() - 0.5) * 0.3;
+                this.vy = (Math.random() - 0.5) * 0.3;
+            }
+
+            draw() {
+                if (this.opacity <= 0.01) return;
+                sCtx.save();
+                sCtx.globalCompositeOperation = 'screen';
+                sCtx.globalAlpha = this.opacity;
+                sCtx.shadowColor = `rgb(${this.color})`;
+                sCtx.shadowBlur = this.currentSize * 2.5;
+                sCtx.fillStyle = `rgba(${this.color}, 0.3)`;
+                drawHeartPath(sCtx, this.x, this.y - this.currentSize / 1.5, this.currentSize);
+                sCtx.fill();
+                sCtx.shadowBlur = this.currentSize * 0.5;
+                sCtx.fillStyle = `rgba(${this.color}, 0.8)`;
+                drawHeartPath(sCtx, this.x, this.y - this.currentSize / 1.5, this.currentSize * 0.6);
+                sCtx.fill();
+                sCtx.shadowBlur = this.currentSize * 0.2;
+                sCtx.fillStyle = '#fff';
+                drawHeartPath(sCtx, this.x, this.y - this.currentSize / 1.5, this.currentSize * 0.2);
+                sCtx.fill();
+                sCtx.restore();
+            }
+
+            update(time) {
+                if (this.opacity < 1) this.opacity += 0.008;
+                this.x += this.vx;
+                this.y += this.vy;
+                const pulse = Math.sin(time * 0.002 + this.pulseOffset) * (this.targetSize * 0.15);
+                if (this.currentSize < this.targetSize) {
+                    this.currentSize += this.growSpeed;
+                }
+                this.currentSize = Math.max(this.targetSize + pulse, 1);
+            }
+        }
+
+        class Star {
+            constructor() {
+                this.x = Math.random() * starCanvas.width;
+                this.y = Math.random() * starCanvas.height;
+                this.size = Math.random() * 2;
+                this.baseOpacity = Math.random() * 0.8 + 0.2;
+                this.opacity = this.baseOpacity;
+                this.speed = Math.random() * 0.05 + 0.02;
+                this.twinkleSpeed = Math.random() * 0.05 + 0.01;
+                this.twinkleOffset = Math.random() * Math.PI * 2;
+            }
+            draw() {
+                sCtx.fillStyle = `rgba(255, 255, 255, ${this.opacity})`;
+                sCtx.beginPath(); sCtx.arc(this.x, this.y, this.size, 0, Math.PI * 2); sCtx.fill();
+            }
+            update(time) {
+                if (isWarping) {
+                    // --- WARP EFFECT LOGIC ---
+                    const cx = starCanvas.width / 2;
+                    const cy = starCanvas.height / 2;
+                    let dx = this.x - cx;
+                    let dy = this.y - cy;
+                    let dist = Math.sqrt(dx * dx + dy * dy);
+
+                    if (dist < 1) { dx = 1; dy = 1; dist = 1.4; } // avoid div/0
+
+                    // Speed increases as star moves away from center
+                    const warpSpeed = (dist * 0.04 + 2) * starSpeedMultiplier * 0.5;
+
+                    this.x += (dx / dist) * warpSpeed;
+                    this.y += (dy / dist) * warpSpeed;
+                    this.size += 0.05; // Stars grow as they approach
+
+                    // Respawn near center
+                    if (this.x < 0 || this.x > starCanvas.width || this.y < 0 || this.y > starCanvas.height) {
+                        this.x = cx + (Math.random() - 0.5) * 40;
+                        this.y = cy + (Math.random() - 0.5) * 40;
+                        this.size = Math.random();
+                        this.opacity = 1;
+                    }
+                } else {
+                    // Original Side Scroll
+                    this.x -= this.speed * starSpeedMultiplier;
+                    if (this.x < 0) this.x = starCanvas.width;
+                }
+
+                if (isAccepted) {
+                    this.opacity = this.baseOpacity + Math.sin(time * 0.005 * this.twinkleSpeed + this.twinkleOffset) * 0.2;
+                }
+            }
+        }
+
+        class ShootingStar {
+            constructor() {
+                this.x = Math.random() * starCanvas.width;
+                this.y = Math.random() * starCanvas.height / 2;
+                this.length = Math.random() * 80 + 10;
+                this.speed = Math.random() * 10 + 6;
+                this.opacity = 1;
+            }
+            draw() {
+                sCtx.strokeStyle = `rgba(255, 255, 255, ${this.opacity})`;
+                sCtx.lineWidth = 2;
+                sCtx.beginPath(); sCtx.moveTo(this.x, this.y);
+                sCtx.lineTo(this.x - this.length, this.y - this.length); sCtx.stroke();
+            }
+            update() { this.x += this.speed; this.y += this.speed; this.opacity -= 0.02; }
+        }
+
+        function initStars() {
+            stars = [];
+            for (let i = 0; i < 450; i++) stars.push(new Star());
+        }
+
+        class Stardust {
+            constructor(x, y) {
+                this.x = x; this.y = y;
+                this.px = x; this.py = y;
+                this.size = Math.random() * 2 + 1;
+                this.life = 1.0;
+                this.decay = Math.random() * 0.02 + 0.01;
+                const angle = Math.random() * Math.PI * 2;
+                const speed = Math.random() * 0.5;
+                this.velocity = { x: Math.cos(angle) * speed, y: Math.sin(angle) * speed };
+                this.color = Math.random() > 0.5 ? '#ffffff' : (isAccepted ? '#ffdf91' : '#ff00ff');
+            }
+            draw() {
+                dCtx.globalAlpha = this.life;
+                dCtx.strokeStyle = this.color;
+                dCtx.lineWidth = this.size;
+                dCtx.lineCap = 'round';
+                dCtx.beginPath(); dCtx.moveTo(this.px, this.py); dCtx.lineTo(this.x, this.y); dCtx.stroke();
+            }
+            update() {
+                this.px = this.x; this.py = this.y;
+                if (!isAccepted) {
+                    const rect = yesBtn.getBoundingClientRect();
+                    const btnCenterX = rect.left + rect.width / 2;
+                    const btnCenterY = rect.top + rect.height / 2;
+                    const growth = (parseFloat(window.getComputedStyle(yesBtn).fontSize) / initialFontSize) - 1;
+                    const dx = btnCenterX - this.x;
+                    const dy = btnCenterY - this.y;
+                    const dist = Math.sqrt(dx * dx + dy * dy);
+                    if (dist < 20 && growth > 0.2) { this.life = 0; return; }
+                    const range = 10 + (growth * 150);
+                    if (dist < range && growth > 0.2) {
+                        const force = (range - dist) / 800 * (growth * 0.03);
+                        this.velocity.x += (dx / dist) * force;
+                        this.velocity.y += (dy / dist) * force;
+                    }
+                }
+                this.x += this.velocity.x; this.y += this.velocity.y;
+                this.velocity.x *= 0.98; this.velocity.y *= 0.98;
+                this.life -= this.decay;
+            }
+        }
+
+        function animate(time) {
+            dCtx.clearRect(0, 0, dustCanvas.width, dustCanvas.height);
+            sCtx.clearRect(0, 0, starCanvas.width, starCanvas.height);
+            stars.forEach(s => { s.update(time); s.draw(); });
+            if (showFinalHearts) {
+                finalHearts.forEach(h => { h.update(time); h.draw(); });
+            }
+            if (Math.random() < 0.015) shootingStars.push(new ShootingStar());
+            for (let i = shootingStars.length - 1; i >= 0; i--) {
+                shootingStars[i].update(); shootingStars[i].draw();
+                if (shootingStars[i].opacity <= 0) shootingStars.splice(i, 1);
+            }
+            const angle = Math.atan2(mouse.y - prevMouse.y, mouse.x - prevMouse.x);
+            const speed = Math.sqrt(Math.pow(mouse.x - prevMouse.x, 2) + Math.pow(mouse.y - prevMouse.y, 2));
+            const stretch = Math.min(speed / 10, 0.5);
+            blob.style.transform = `translate(${mouse.x - 7}px, ${mouse.y - 7}px) rotate(${angle}rad) scale(${(1 + stretch) * clickScale}, ${(1 - stretch * 0.4) * clickScale})`;
+            prevMouse = { ...mouse };
+            if (clickScale < 1.0) clickScale += 0.05;
+            for (let i = 0; i < DUST_PER_FRAME; i++) dustParticles.push(new Stardust(mouse.x, mouse.y));
+            for (let i = dustParticles.length - 1; i >= 0; i--) {
+                dustParticles[i].update(); dustParticles[i].draw();
+                if (dustParticles[i].life <= 0) dustParticles.splice(i, 1);
+            }
+            requestAnimationFrame(animate);
+        }
+
+        initCanvases(); requestAnimationFrame(animate);
+
+        let moveCooldown = 0;
+        let phraseIndex = 0;
+        noBtn.style.left = (yesBtn.getBoundingClientRect().right + 20) + 'px';
+        noBtn.style.top = yesBtn.getBoundingClientRect().top + 'px';
+
+        document.addEventListener('mousemove', (e) => {
+            mouse.x = e.clientX; mouse.y = e.clientY;
+            if (isAccepted) return;
+            if (Date.now() < moveCooldown) return;
+
+            const r = noBtn.getBoundingClientRect();
+            const distance = Math.sqrt(
+                Math.pow(e.clientX - (r.left + r.width / 2), 2) +
+                Math.pow(e.clientY - (r.top + r.height / 2), 2)
+            );
+
+            if (distance < 120) {
+                const padding = 100;
+                const newX = Math.random() * (window.innerWidth - padding * 2) + padding;
+                const newY = Math.random() * (window.innerHeight - padding * 2) + padding;
+
+                noBtn.style.left = newX + 'px';
+                noBtn.style.top = newY + 'px';
+                noBtn.innerText = NO_PHRASES[++phraseIndex % NO_PHRASES.length];
+
+                const currentSize = parseFloat(window.getComputedStyle(yesBtn).fontSize);
+                const nextSize = currentSize * 1.15;
+                yesBtn.style.fontSize = nextSize + 'px';
+
+                if (nextSize > 180) {
+                    if (!hasPlayedGetOverHere) {
+                        hasPlayedGetOverHere = true;
+
+                        setTimeout(() => {
+                            yesBtn.innerHTML = "GET OVER HERE!! ⛓️🔥";
+                            yesBtn.style.backgroundColor = "#ff0000";
+                            yesBtn.style.boxShadow = "0 0 80px #ff0000";
+
+                            const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                            const source = audioCtx.createMediaElementSource(getOverHereSfx);
+                            const delay = audioCtx.createDelay();
+                            delay.delayTime.value = 0.05;
+                            const feedback = audioCtx.createGain();
+                            feedback.gain.value = 0.1;
+                            const volumeNode = audioCtx.createGain();
+                            volumeNode.gain.value = 0.01;
+
+                            source.connect(delay);
+                            delay.connect(feedback);
+                            feedback.connect(delay);
+                            source.connect(volumeNode);
+                            delay.connect(volumeNode);
+                            volumeNode.connect(audioCtx.destination);
+
+                            getOverHereSfx.play();
+                        }, 1000);
+                    }
+                }
+
+                moveCooldown = Date.now() + 150;
+            }
+        });
+
+        document.addEventListener('mousedown', () => clickScale = 0.7);
+
+        yesBtn.addEventListener('click', (e) => {
+            isAccepted = true;
+
+            bgMusic.pause();
+            getOverHereSfx.pause();
+            yaySfx.volume = 0.8;
+            yaySfx.play();
+
+            portal.style.setProperty('--x', e.clientX + 'px');
+            portal.style.setProperty('--y', e.clientY + 'px');
+            portal.classList.add('active');
+            document.body.classList.add('accepted');
+
+            setTimeout(() => {
+                document.querySelector('.glass-card').style.display = 'none';
+                noBtn.style.display = 'none';
+                successScreen.style.display = 'flex';
+                supernovaVid.play();
+
+                setTimeout(() => {
+                    successScreen.classList.add('visible');
+                    portal.style.opacity = '0';
+                }, 100);
+
+                // --- UPDATED ONENDED LOGIC ---
+                supernovaVid.onended = () => {
+                    // Fade video out and nebula background in
+                    supernovaVid.style.opacity = '0';
+                    successScreen.classList.add('post-video');
+
+                    // Trigger warp speed and show drifting hearts
+                    starSpeedMultiplier = 5.0;
+                    isWarping = true; // <--- TRIGGER WARP EFFECT HERE
+                    showFinalHearts = true;
+
+                    // Spawn a dense cloud of hearts
+                    let heartCount = 0;
+                    const maxHearts = 35;
+                    const spawnInterval = setInterval(() => {
+                        finalHearts.push(new LuminousHeart());
+                        heartCount++;
+                        if (heartCount >= maxHearts) clearInterval(spawnInterval);
+                    }, 60);
+
+                    // Massive glow for the final text
+                    setTimeout(() => {
+                        const h1 = document.querySelector('.success-content h1');
+                        h1.style.transition = 'all 3.5s ease';
+                        h1.style.textShadow = '0 0 20px #fff, 0 0 40px #ff4d6d, 0 0 80px #ff00ff, 0 0 120px #ff4d6d';
+                        h1.style.transform = 'scale(1.1) translateY(-20px)';
+                    }, 100);
+                };
+            }, 600);
+        });
+    </script>
+</body>
+
+</html>
