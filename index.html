@@ -339,7 +339,7 @@
 
         document.addEventListener('mousemove', () => {
             if (bgMusic.paused && !isAccepted) {
-                bgMusic.volume = 0.4;
+                bgMusic.volume = 1;
                 bgMusic.play().catch(error => {
                     console.log("Waiting for more interaction...");
                 });
@@ -646,7 +646,7 @@
                             const feedback = audioCtx.createGain();
                             feedback.gain.value = 0.1;
                             const volumeNode = audioCtx.createGain();
-                            volumeNode.gain.value = 0.05;
+                            volumeNode.gain.value = 0.08;
 
                             source.connect(delay);
                             delay.connect(feedback);
